@@ -1,3 +1,5 @@
+package com.threads.ownerandthief;
+
 public class Thing {
     private double cost;
     private double weight;
