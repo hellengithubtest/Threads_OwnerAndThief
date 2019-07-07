@@ -1,45 +1,34 @@
-package com.threads.ownerandthief;
-
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Vector;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Owner implements Runnable {
-    private final Vector<Thing> sharedHouse;
-    private final int size;
+    private final Home sharedHouse;
+    private ReadWriteLock rwLock = new ReentrantReadWriteLock();
+    //private final Thing thing = new Thing(Math.random()*1, Math.random()*2);
 
-    public Owner(Vector sharedHouse, int size) {
+    public Owner(Home sharedHouse) {
         this.sharedHouse = sharedHouse;
-        this.size = size;
     }
 
     @Override
     public void run() {
-        for (double i = 0; i < 10; i++) {
-            try {
-                addSomeStaff(i);
-            } catch (InterruptedException e) {
-                System.out.println(e);
-            }
+        Lock writeLock = rwLock.writeLock();
+        writeLock.lock();
+        try {
+            addSomeThing();
+        } finally{
+            writeLock.unlock();
         }
-
     }
-    private void addSomeStaff(double i) throws InterruptedException{
+    private void addSomeThing(){
+        Random random = new Random();
         System.out.println("House size " + sharedHouse.size());
-        while (sharedHouse.size() == size){
-            synchronized (sharedHouse){
-                System.out.println("Queue is full " + Thread.currentThread().getName() + "is waiting, size: " +sharedHouse.size());
-                sharedHouse.wait();
-            }
-        }
-        synchronized (sharedHouse){
-            double min = 1;
-            double max = 100;
-            sharedHouse.add(new Thing(Math.random() * max-min + i*2, Math.random() * max-min + i));
-            sharedHouse.notifyAll();
-            System.out.println("Add thing " + sharedHouse);
-        }
+        sharedHouse.add(new Thing(random.nextInt(10), random.nextInt(15)));
+        sharedHouse.notifyAll();
+        System.out.println("Add thing " + sharedHouse);
     }
 }
