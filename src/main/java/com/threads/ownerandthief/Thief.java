@@ -1,13 +1,12 @@
 package com.threads.ownerandthief;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.*;
 
 public class Thief implements Runnable {
     private final Home sharedHouse;
     private final Bagpack bagpack;
-    private ReadWriteLock rwLock = new ReentrantReadWriteLock();
+    private Lock l = new ReentrantLock();
 
     public Thief(Home sharedHouse) {
         this.sharedHouse = sharedHouse;
@@ -16,13 +15,19 @@ public class Thief implements Runnable {
 
     @Override
     public void run() {
-        Lock readLock = rwLock.readLock();
-        readLock.lock();
-        try {
-            stole();
-            System.out.println("Thief: ");
-        } finally {
-            readLock.unlock();
+
+        if(!sharedHouse.isThief() && sharedHouse.getNumberOwner() == 0) {
+            l.lock();
+            try {
+                sharedHouse.setThief(true);
+                stole();
+                System.out.println("Thief: " + Thread.currentThread().getName());
+            } finally {
+                sharedHouse.setThief(false);
+                l.unlock();
+            }
+        }else{
+            System.out.println("Home is empty, thief is go out");
         }
     }
 
@@ -39,6 +44,7 @@ public class Thief implements Runnable {
 
     public int getMax(List<Thing> list) {
         int size = list.size();
+        System.out.println("getMax size is " + size);
         int ind[] = new int[size];
         int max = 0;
         for (int j = 0; j < size; j++)

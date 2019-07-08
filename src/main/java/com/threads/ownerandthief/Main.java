@@ -6,8 +6,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main {
-    private static final CyclicBarrier BARRIER = new CyclicBarrier(20);
-    static final int owner_size = 15;
+    private static final CyclicBarrier barrier = new CyclicBarrier(10);
+    static final int owner_size = 5;
     static final int thief_size = 5;
 
     public static void main(String[] args) {
@@ -24,7 +24,7 @@ public class Main {
         }
 
         try{
-            BARRIER.await();
+            barrier.await();
         }catch (Exception e){
 
         }

@@ -30,6 +30,6 @@ public class Thing {
     }
 
     public String toString(){
-        return "Thing "+"cost is "+cost+" weight is " + weight;
+        return " Thing "+"cost is "+cost+" weight is " + weight;
     }
 }

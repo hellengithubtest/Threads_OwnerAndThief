@@ -2,14 +2,15 @@ package com.threads.ownerandthief;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.locks.*;
 
 public class Owner implements Runnable {
     private final Home sharedHouse;
-    private ReadWriteLock rwLock = new ReentrantReadWriteLock();
-    //private final Thing thing = new Thing(Math.random()*1, Math.random()*2);
+    private Lock l = new ReentrantLock();
+
+
+    //private final Thing thing = new Thing(Math.random()*1, Math.random()private ReadWriteLock rwLock = new ReentrantReadWriteLock();*2);
 
     public Owner(Home sharedHouse) {
         this.sharedHouse = sharedHouse;
@@ -17,19 +18,18 @@ public class Owner implements Runnable {
 
     @Override
     public void run() {
-        Lock writeLock = rwLock.writeLock();
-        writeLock.lock();
+
         try {
-            addSomeThing();
-        } finally{
-            writeLock.unlock();
+        while (sharedHouse.isThief() || sharedHouse.getNumberOwner() > 10) {
+            wait();
         }
-    }
-    private void addSomeThing(){
+        l.lock();
         Random random = new Random();
-        System.out.println("House size " + sharedHouse.size());
+        System.out.println("House size " + sharedHouse.size() + " list of things: " + sharedHouse.printList() + Thread.currentThread().getName());
         sharedHouse.add(new Thing(random.nextInt(10), random.nextInt(15)));
-        sharedHouse.notifyAll();
-        System.out.println("Add thing " + sharedHouse);
+        } catch (InterruptedException e){
+            l.unlock();
+            notifyAll();
+        }
     }
 }
