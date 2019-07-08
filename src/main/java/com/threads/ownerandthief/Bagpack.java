@@ -1,3 +1,5 @@
+package com.threads.ownerandthief;
+
 public class Bagpack {
     private int currentSize;
 
