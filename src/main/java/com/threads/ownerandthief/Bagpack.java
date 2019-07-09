@@ -4,7 +4,7 @@ public class Bagpack {
     private int currentSize;
 
     public Bagpack() {
-        this.currentSize = 10;
+        this.currentSize = 15;
     }
 
     public int getCurrentSize() {
@@ -12,7 +12,7 @@ public class Bagpack {
     }
 
     public void setThing(Thing thing) {
-        if (currentSize < thing.getWeight()){
+        if (currentSize > thing.getWeight()){
             this.currentSize = currentSize-thing.getWeight();
             System.out.println("The thief was pick up thing" + thing.getCost()+ "" + thing.getWeight());
         }else{

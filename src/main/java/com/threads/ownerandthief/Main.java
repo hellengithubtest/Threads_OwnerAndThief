@@ -7,8 +7,8 @@ import java.util.concurrent.Executors;
 
 public class Main {
     private static final CyclicBarrier barrier = new CyclicBarrier(10);
-    static final int owner_size = 5;
-    static final int thief_size = 5;
+        static final int owner_size = 105;
+        static final int thief_size = 105;
 
     public static void main(String[] args) {
         Home home = new Home();

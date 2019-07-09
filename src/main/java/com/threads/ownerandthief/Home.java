@@ -9,8 +9,8 @@ import java.util.*;
 
 public class Home {
     private List<Thing> thingsList = new ArrayList<>();
-    private volatile boolean isThief;
-    private volatile int numberOwner;
+    private volatile boolean isThief = false;
+    private volatile int numberOwner = 0;
 
     public boolean isThief(){
         return this.isThief;
@@ -39,6 +39,7 @@ public class Home {
     public List<Thing> getList(){
         return thingsList;
     }
+
     public void setList(List<Thing> list){
         this.thingsList = list;
     }
