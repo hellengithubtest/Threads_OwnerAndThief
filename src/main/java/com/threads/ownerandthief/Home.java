@@ -5,35 +5,26 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class Home {
     private List<Thing> thingsList = new ArrayList<>();
-    private volatile boolean isThief = false;
-    private volatile int numberOwner = 0;
+    private AtomicBoolean isThief = new AtomicBoolean(false);
+    private AtomicInteger numberOwner = new AtomicInteger(0);
 
-    public boolean isThief(){
+    public AtomicBoolean isThief(){
         return this.isThief;
     }
-    public void setThief(boolean thief){
+    public void setThief(AtomicBoolean thief){
         this.isThief = thief;
     }
-    public int getNumberOwner(){
+    public AtomicInteger getNumberOwner(){
         return this.numberOwner;
-    }
-
-    public void setUpNumber() {
-        this.numberOwner = numberOwner + 1;
-    }
-
-    public void setDownNumber() {
-        this.numberOwner = numberOwner - 1;
     }
     public int size(){
         return thingsList.size();
-    }
-    public void add(Thing thing){
-        thingsList.add(thing);
     }
 
     public List<Thing> getList(){

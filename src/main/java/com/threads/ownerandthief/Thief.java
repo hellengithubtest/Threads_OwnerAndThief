@@ -1,19 +1,31 @@
 package com.threads.ownerandthief;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.*;
 
 public class Thief implements Runnable {
     private final Home sharedHouse;
     private final Bagpack bagpack;
+    CyclicBarrier barrier1 = null;
 
-    public Thief(Home sharedHouse) {
+    public Thief(Home sharedHouse, CyclicBarrier barrier1) {
         this.sharedHouse = sharedHouse;
         this.bagpack = new Bagpack();
+        this.barrier1 = barrier1;
     }
 
     @Override
     public void run() {
+        try {
+            this.barrier1.await();
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }catch (BrokenBarrierException e){
+            e.printStackTrace();
+        }
         System.out.println("Try to stole thing " + Thread.currentThread().getName());
         stole();
         System.out.println("Thief is stolen " + Thread.currentThread().getName());
@@ -21,7 +33,7 @@ public class Thief implements Runnable {
 
     private synchronized void stole() {
 
-            while(sharedHouse.isThief() || sharedHouse.getNumberOwner() > 0 || sharedHouse.size() == 0) {
+            while(sharedHouse.isThief().get() || sharedHouse.getNumberOwner().get() > 0 || sharedHouse.size() == 0) {
                 System.out.println("Thief is wait " + Thread.currentThread().getName() + " isThief " + sharedHouse.isThief() + " Number owner " + sharedHouse.getNumberOwner() + " Size " + sharedHouse.size());
                 try {
                     synchronized (sharedHouse) {
@@ -31,9 +43,10 @@ public class Thief implements Runnable {
 
                 }
             }
-            sharedHouse.setThief(true);
-            System.out.println("Thief is set true " + Thread.currentThread().getName()+" isThief "+sharedHouse.isThief()+" Number owner "+sharedHouse.getNumberOwner()+" Size "+sharedHouse.size());
-
+            synchronized (sharedHouse) {
+                sharedHouse.setThief(new AtomicBoolean(true));
+                System.out.println("Thief is set true " + Thread.currentThread().getName() + " isThief " + sharedHouse.isThief() + " Number owner " + sharedHouse.getNumberOwner() + " Size " + sharedHouse.size());
+            }
             synchronized (sharedHouse){
                 int maxInd = 0;
             while (bagpack.getCurrentSize() != 0 && maxInd == 0 && sharedHouse.size() != 0) {
@@ -54,8 +67,8 @@ public class Thief implements Runnable {
                 }
             }
             }
-            System.out.println("Thief is stole some things" + Thread.currentThread().getName() + bagpack.toString());
-            sharedHouse.setThief(false);
+            System.out.println("Thief is stole some things" + Thread.currentThread().getName());
+            sharedHouse.setThief(new AtomicBoolean(false));
             synchronized (sharedHouse) {
                 sharedHouse.notifyAll();
             }
@@ -63,7 +76,6 @@ public class Thief implements Runnable {
 
     public int getMax(List<Thing> list) { //get the thing with max cost
         int size = list.size();
-        System.out.println("getMax size is " + size);
         int ind[] = new int[size];
         int max = 0;
         for (int j = 0; j < size; j++)
