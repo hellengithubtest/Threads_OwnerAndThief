@@ -12,16 +12,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Home {
     private List<Thing> thingsList = new ArrayList<>();
     private AtomicBoolean isThief = new AtomicBoolean(false);
-    private AtomicInteger numberOwner = new AtomicInteger(0);
+    private AtomicBoolean isOwner = new AtomicBoolean(false);
+    private volatile int permits = 5;
 
     public AtomicBoolean isThief(){
         return this.isThief;
     }
+
+    public AtomicBoolean isOwner(){
+        return this.isOwner;
+    }
     public void setThief(AtomicBoolean thief){
         this.isThief = thief;
     }
-    public AtomicInteger getNumberOwner(){
-        return this.numberOwner;
+    public int getPermits(){
+        return this.permits;
+    }
+    public void setPermits(int permits){
+        this.permits = permits;
     }
     public int size(){
         return thingsList.size();
