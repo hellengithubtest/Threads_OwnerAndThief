@@ -1,9 +1,9 @@
 package com.threads.ownerandthief;
 
-public class Bagpack {
+public class Backpack {
     private int currentSize;
 
-    public Bagpack() {
+    public Backpack() {
         this.currentSize = 15;
     }
 
@@ -16,7 +16,7 @@ public class Bagpack {
             this.currentSize = currentSize-thing.getWeight();
             System.out.println("The thief was pick up thing" + thing.getCost()+ "" + thing.getWeight());
         }else{
-            System.out.println("The bagpack is so heavy...");
+            System.out.println("The backpack is so heavy...");
         }
     }
 }

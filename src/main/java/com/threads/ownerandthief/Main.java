@@ -8,8 +8,8 @@ import java.util.concurrent.Semaphore;
 
 public class Main {
     private static final CyclicBarrier barrier = new CyclicBarrier(50);
-    private static final Semaphore semOw = new Semaphore(5);
-    private static final Semaphore semTh = new Semaphore(1);
+    private static final Semaphore semOw = new Semaphore(5); //count of Owners in home at the same time
+    private static final Semaphore semTh = new Semaphore(1); //count of Thiefs in home at the same time
         static final int owner_size = 25;
         static final int thief_size = 25;
 
@@ -23,20 +23,5 @@ public class Main {
         for (int i = 0; i < thief_size; i++) {
             new Thread(new Thief(home,barrier, semOw, semTh)).start();
         }
-
-//*        try{
-//*            barrier.await();
-//*        }catch (Exception e){
-//*            e.printStackTrace();
-//*        }
-
-        /*
-        for (int i = 0; i < owner_size; i++) {
-            new Owner(sharedHouse, size).start();
-        }
-        for (int i = 0; i < thief_size; i++) {
-            new Thief(sharedHouse).start();
-        }
-        */
     }
 }

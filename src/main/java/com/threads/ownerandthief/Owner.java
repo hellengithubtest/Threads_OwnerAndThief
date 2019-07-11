@@ -15,9 +15,6 @@ public class Owner implements Runnable {
     private Semaphore semOw = null;
     private Semaphore semTh = null;
 
-
-    //private final Thing thing = new Thing(Math.random()*1, Math.random()private ReadWriteLock rwLock = new ReentrantReadWriteLock();*2);
-
     public Owner(Home sharedHouse, CyclicBarrier barrier1, Semaphore semOw, Semaphore semTh) {
 
         this.sharedHouse = sharedHouse;
@@ -28,12 +25,6 @@ public class Owner implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("||O||Try to add thing" + Thread.currentThread().getName());
-        addThing();
-        System.out.println("||O||Owner was added the thing" + Thread.currentThread().getName());
-    }
-    public void addThing(){
-        //List<Thing> list = sharedHouse.getList();
         try{
             this.barrier1.await();
         }catch (InterruptedException e) {
@@ -41,9 +32,15 @@ public class Owner implements Runnable {
         } catch (BrokenBarrierException e) {
             e.printStackTrace();
         }
-
+        System.out.println("Owner try to add thing " + Thread.currentThread().getName());
+        addThing();
+        System.out.println("Owner have added the thing" + Thread.currentThread().getName());
+    }
+    public void addThing(){
         try {
-            System.out.println("||O||Owner thread check permits " + semOw.availablePermits() + " " + Thread.currentThread().getName());
+            /*
+            if Thief returned permit for home we can go through
+             */
             while (semTh.availablePermits()==0){
                 try {
                     synchronized (sharedHouse) {
@@ -53,21 +50,18 @@ public class Owner implements Runnable {
                     e.printStackTrace();
                 }
             }
-
+            /*
+            5 owners can enter to home, semaphore have 5 permits
+            */
             semOw.acquire();
-            System.out.println("||O||Get available permits " + semOw.availablePermits());
-            System.out.println("||O||Owner thread get acqure " + Thread.currentThread().getName() + "available permits" + semOw.availablePermits());
-/*          sem.availablePermits();*/
-
-            synchronized (sharedHouse) {
-                System.out.println("||O||Owner sync " + sharedHouse.getPermits()+"Thread is "+Thread.currentThread().getName());
-                if(sharedHouse.getPermits()==0){
-                    sharedHouse.setPermits(5);
-                }
+            /*
+            but only one owner can access to write list
+             */
+          synchronized (sharedHouse) {
+                System.out.println("Owner sync " + semOw.availablePermits()+"Thread is "+Thread.currentThread().getName());
                 Random random = new Random();
                 sharedHouse.getList().add(new Thing(random.nextInt(10) + 1, random.nextInt(15)));
-                System.out.println("||O||List of things updated " + sharedHouse.size() + "Current thread" + Thread.currentThread().getName());
-                sharedHouse.setPermits(sharedHouse.getPermits() - 1);
+                System.out.println("List of things was updated " + sharedHouse.size() + "Current thread" + Thread.currentThread().getName());
                 sharedHouse.notifyAll();
             }
 
