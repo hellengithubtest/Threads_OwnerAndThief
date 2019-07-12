@@ -1,5 +1,8 @@
 package com.threads.ownerandthief;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.Vector;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
@@ -15,8 +18,13 @@ public class Main {
 
 
     public static void main(String[] args) {
+        Random random = new Random();
         Home home = new Home();
-
+/*        List<Thing> origin = new ArrayList<>();
+        for(int i = 0; i < owner_size*3; i++){
+            Thing thing = new Thing(random.nextInt(10) + 1, random.nextInt(15)+1);
+            origin.add(thing);
+        }*/
         for (int i = 0; i < owner_size; i++) {
             new Thread(new Owner(home,barrier, semOw, semTh)).start();
         }

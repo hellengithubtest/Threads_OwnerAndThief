@@ -1,16 +1,13 @@
 package com.threads.ownerandthief;
-import java.sql.Time;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.*;
 
 public class Owner implements Runnable {
     private final Home sharedHouse;
+    private Backpack ownerBackpack;
     private CyclicBarrier barrier1 = null;
     private Semaphore semOw = null;
     private Semaphore semTh = null;
@@ -18,6 +15,7 @@ public class Owner implements Runnable {
     public Owner(Home sharedHouse, CyclicBarrier barrier1, Semaphore semOw, Semaphore semTh) {
 
         this.sharedHouse = sharedHouse;
+        this.ownerBackpack = new Backpack(3);
         this.barrier1 = barrier1;
         this.semOw = semOw;
         this.semTh = semTh;
@@ -57,18 +55,26 @@ public class Owner implements Runnable {
             /*
             but only one owner can access to write list
              */
+            List<Thing> before = sharedHouse.getList();
           synchronized (sharedHouse) {
                 System.out.println("Owner sync " + semOw.availablePermits()+"Thread is "+Thread.currentThread().getName());
-                Random random = new Random();
-                sharedHouse.getList().add(new Thing(random.nextInt(10) + 1, random.nextInt(15)));
+                /*
+                put things to home
+                 */
+                sharedHouse.joinLists(this.ownerBackpack.getList());
                 System.out.println("List of things was updated " + sharedHouse.size() + "Current thread" + Thread.currentThread().getName());
                 sharedHouse.notifyAll();
             }
 
+            List<Thing> after = sharedHouse.getList();
+            System.out.println("List before and after: " + before.size() + "/n" + after.size());
         } catch (InterruptedException e){
             e.printStackTrace();
             sharedHouse.notifyAll();
         }
         semOw.release();
+        synchronized (sharedHouse){
+            sharedHouse.notifyAll();
+        }
     }
 }

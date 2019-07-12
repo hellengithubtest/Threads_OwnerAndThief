@@ -32,4 +32,10 @@ public class Thing {
     public String toString(){
         return " Thing "+"cost is "+cost+" weight is " + weight + "||";
     }
+    public static Comparator<Thing> COST_DESC = new Comparator<Thing>() {
+        @Override
+        public int compare(Thing thing, Thing t1) {
+            return Integer.compare(t1.cost, thing.cost);
+        }
+    };
 }
