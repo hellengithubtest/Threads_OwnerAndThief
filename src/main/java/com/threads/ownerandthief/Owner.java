@@ -1,6 +1,5 @@
 package com.threads.ownerandthief;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Semaphore;
@@ -15,7 +14,7 @@ public class Owner implements Runnable {
     public Owner(Home sharedHouse, CyclicBarrier barrier1, Semaphore semOw, Semaphore semTh) {
 
         this.sharedHouse = sharedHouse;
-        this.ownerBackpack = new Backpack(3);
+        this.ownerBackpack = null;
         this.barrier1 = barrier1;
         this.semOw = semOw;
         this.semTh = semTh;
@@ -56,8 +55,7 @@ public class Owner implements Runnable {
             but only one owner can access to write list
              */
             List<Thing> before = sharedHouse.getList();
-          synchronized (sharedHouse) {
-                System.out.println("Owner sync " + semOw.availablePermits()+"Thread is "+Thread.currentThread().getName());
+            synchronized (sharedHouse) {
                 /*
                 put things to home
                  */
@@ -76,5 +74,13 @@ public class Owner implements Runnable {
         synchronized (sharedHouse){
             sharedHouse.notifyAll();
         }
+    }
+    /*
+    Fill owners backpack
+     */
+    public void pullBackpack(List <Thing> list){
+        this.ownerBackpack = new Backpack();
+        this.ownerBackpack.pullThing(list);
+
     }
 }

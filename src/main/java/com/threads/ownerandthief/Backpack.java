@@ -5,24 +5,20 @@ import java.util.List;
 import java.util.Random;
 
 public class Backpack {
+
     private List<Thing> backpackList = new ArrayList<Thing>();
     private int currentSize;
 
     /*
     Constructor for Thief
      */
-    public Backpack() {
-        this.currentSize = 15;
-    }
-    /*
-    Constructor for Owner
-     */
-    public Backpack(int countThings){
-        Random random = new Random();
-        for(int i = 0; i < countThings; i++){
-            backpackList.add(new Thing(random.nextInt(10) + 1, random.nextInt(15)+1));
-        }
+    public Backpack(int capacity) {
 
+        this.currentSize = capacity;
+    }
+    public Backpack() {
+
+        this.currentSize = 0;
     }
 
     public int getCurrentSize() {
@@ -30,12 +26,15 @@ public class Backpack {
     }
 
     public void setThing(Thing thing) {
-        if (currentSize > thing.getWeight()){
-            this.currentSize = currentSize-thing.getWeight();
-            System.out.println("The thief was pick up thing" + thing.getCost()+ "" + thing.getWeight());
-        }else{
-            System.out.println("The backpack is so heavy...");
-        }
+        List <Thing> list = this.backpackList;
+        list.add(thing);
+        this.backpackList = list;
+        int size = this.currentSize;
+        this.currentSize = size - thing.getWeight();
+    }
+
+    public void pullThing(List <Thing> list){
+        this.backpackList = list;
     }
     public List<Thing> getList(){
         return this.backpackList;

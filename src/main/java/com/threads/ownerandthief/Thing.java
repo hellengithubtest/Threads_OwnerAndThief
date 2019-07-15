@@ -16,7 +16,7 @@ public class Thing {
         return this.weight;
     }
 
-    public boolean equals(Object o){
+ /*   public boolean equals(Object o){
         if(this == o){
             return true;
         }
@@ -24,13 +24,13 @@ public class Thing {
         Thing aThing = (Thing) o;
         if(cost != aThing.cost)
             return false;
-        /*if(!weight.equals(aThing.weight))
-            return false;*/
+        *//*if(!weight.equals(aThing.weight))
+            return false;*//*
         return true;
-    }
+    }*/
 
     public String toString(){
-        return " Thing "+"cost is "+cost+" weight is " + weight + "||";
+        return " Thing: cost-" + cost + " weight-" + weight;
     }
     public static Comparator<Thing> COST_DESC = new Comparator<Thing>() {
         @Override
