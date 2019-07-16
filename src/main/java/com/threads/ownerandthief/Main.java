@@ -12,7 +12,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-        ExecutorService executor = Executors.newFixedThreadPool(10);
+        ExecutorService executor = Executors.newFixedThreadPool(thief_size);
         List<Future<List>> list = new ArrayList<Future<List>>();
 
         Random random = new Random();
@@ -22,7 +22,9 @@ public class Main {
          */
         List<Thing> origin = new ArrayList<>();
         List<Thing> out = new ArrayList<>();
-
+        /*
+        Fill list with random things
+         */
         for (int i = 0; i < owner_size * 3; i++) {
             Thing thing = new Thing(random.nextInt(10) + 1, random.nextInt(15) + 1);
             origin.add(thing);
@@ -42,7 +44,6 @@ public class Main {
             } else if (thief_size != 0) {
                 //System.out.println("Thief");
                 Callable<List> callable = new Thief(home, barrier, semOw, semTh);
-                //new Thread(new Thief(home,barrier, semOw, semTh)).start();
                 Future<List> future = executor.submit(callable);
                 list.add(future);
                 thief_size--;
