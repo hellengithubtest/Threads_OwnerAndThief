@@ -4,54 +4,25 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class Main {
-    private static final CyclicBarrier barrier = new CyclicBarrier(20);
-    private static final Semaphore semOw = new Semaphore(5); //count of Owners in home at the same time
-    private static final Semaphore semTh = new Semaphore(1); //count of Thiefs in home at the same time
-    static int owner_size = 10;
-    static int thief_size = 10;
 
+    static int numberOfOwners = 20;
+    static int numberOfThieves = 20;
+    static int totalCountOfOwnersInHome = 5;
+    static int totalCountOfThievesInHome = 1;
+    static int totalNumberOfThingsForEachOwner = 3;
+    private static final Semaphore semaphoreForOwners = new Semaphore(totalCountOfOwnersInHome); //count of Owners in home at the same time
+    private static final Semaphore semaphoreForThieves = new Semaphore(totalCountOfThievesInHome); //count of Thieves in home at the same time
+    private static final CyclicBarrier barrier = new CyclicBarrier(numberOfOwners + numberOfThieves );
 
     public static void main(String[] args) {
-        ExecutorService executor = Executors.newFixedThreadPool(thief_size);
-        List<Future<List>> list = new ArrayList<Future<List>>();
 
-        Random random = new Random();
-        Home home = new Home();
-        /*
-        Initial list of things
-         */
+        List<Future<List>> list = new ArrayList<Future<List>>();
         List<Thing> origin = new ArrayList<>();
         List<Thing> out = new ArrayList<>();
-        /*
-        Fill list with random things
-         */
-        for (int i = 0; i < owner_size * 3; i++) {
-            Thing thing = new Thing(random.nextInt(10) + 1, random.nextInt(15) + 1);
-            origin.add(thing);
-        }
+        Home home = new Home();
 
-        int counter = 0;
-        for (; ; ) {
-            if (random.nextInt(100) % 2 == 0 && owner_size != 0) {
-                //System.out.println("Owner");
-                Owner owner = new Owner(home, barrier, semOw, semTh);
-                List<Thing> subList = origin.subList(counter, counter + 3);
-                owner.pullBackpack(subList);
-                new Thread(owner).start();
-                counter = counter + 3;
-                owner_size--;
+        initializeOwnersAndThieves(home, origin,list);
 
-            } else if (thief_size != 0) {
-                //System.out.println("Thief");
-                Callable<List> callable = new Thief(home, barrier, semOw, semTh);
-                Future<List> future = executor.submit(callable);
-                list.add(future);
-                thief_size--;
-            } if (owner_size == 0 && thief_size == 0) {
-                break;
-            }
-
-        }
         for (Future<List> fut : list) {
             try {
                 out.addAll(fut.get());
@@ -59,20 +30,33 @@ public class Main {
                 e.printStackTrace();
             }
         }
+        System.out.println("List of stolen things " + out);
+        System.out.println("List of things stay on home " + home.getList());
         out.addAll(home.getList());
-        System.out.println("*** origin" + origin.size() + origin);
-        System.out.println("****** out" + out.size() + out);
-        int count = 0;
-        for (int i = 0 ; i < origin.size(); i++){
-            for (int j = 0; j < origin.size(); j++){
-                if(origin.get(i).equals(out.get(j))){
-                    count++;
-                System.out.println(origin.get(i) + " is equal " + out.get(j) + " Count of things: " +count);
-                }
-            }
+        printOutput(origin, out);
+    }
+    public static void initializeOwnersAndThieves(Home home, List<Thing> origin, List <Future<List>> list){
+        ExecutorService executor = Executors.newFixedThreadPool(numberOfOwners + numberOfThieves);
+        Random random = new Random();
+        for (int i = 0; i < numberOfOwners; i++){
+            Owner owner = new Owner(home, barrier, semaphoreForOwners, semaphoreForThieves);
+            owner.pullBackpackList(random.nextInt(totalNumberOfThingsForEachOwner + 1));
+            origin.addAll(owner.getBackpackList());
+            Callable<List> callableOwners = owner;
+            Future<List> future = executor.submit(callableOwners);
+            list.add(future);
         }
+        for (int i = 0; i < numberOfThieves; i++){
+            Callable<List> callableThieves = new Thief(home, barrier, semaphoreForOwners, semaphoreForThieves);
+            Future<List> future = executor.submit(callableThieves);
+            list.add(future);
+        }
+
         executor.shutdown();
-
-
+    }
+    public static void printOutput(List<Thing> origin, List<Thing> out){
+        System.out.println("ORIGIN " + "Size: " + origin.size() + " " + origin);
+        System.out.println("OUT    " + "Size: " + out.size() + " " + out);
+        System.out.println("Lists is compare? " + origin.containsAll(out));
     }
 }

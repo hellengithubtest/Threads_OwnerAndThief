@@ -1,34 +1,30 @@
 package com.threads.ownerandthief;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.*;
 
 public class Thief implements Callable <List> {
     private final Home sharedHouse;
     private final Backpack backpack;
-    private CyclicBarrier barrier1 = null;
-    private Semaphore semOw = null;
-    private Semaphore semTh = null;
+    private CyclicBarrier barrier = null;
+    private Semaphore semaphoreForOwners = null;
+    private Semaphore semaphoreForThieves = null;
 
-    public Thief(Home sharedHouse, CyclicBarrier barrier1, Semaphore semOw, Semaphore semTh) {
+    public Thief(Home sharedHouse, CyclicBarrier barrier, Semaphore semaphoreForOwners, Semaphore semaphoreForThieves) {
+        int totalWeight = 15;
         this.sharedHouse = sharedHouse;
-        this.backpack = new Backpack(15);
-        this.barrier1 = barrier1;
-        this.semOw = semOw;
-        this.semTh = semTh;
+        this.backpack = new Backpack(totalWeight);
+        this.barrier = barrier;
+        this.semaphoreForOwners = semaphoreForOwners;
+        this.semaphoreForThieves = semaphoreForThieves;
     }
 
     @Override
     public List<Thing> call() {
         try {
-            this.barrier1.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (BrokenBarrierException e) {
+            this.barrier.await();
+        } catch (InterruptedException | BrokenBarrierException  e) {
             e.printStackTrace();
         }
         System.out.println("Try to stole thing " + Thread.currentThread().getName());
@@ -39,10 +35,10 @@ public class Thief implements Callable <List> {
 
     private void stole() {
         try {
-                /*
-                 if Owners return all permits and home have a thing
-                 */
-            while (semOw.availablePermits() < 5 || sharedHouse.size() == 0) {
+            /*
+             if Owners return all permits and home have a thing
+             */
+            while (semaphoreForOwners.availablePermits() < 5 ) {
                 try {
                     synchronized (sharedHouse) {
                         sharedHouse.wait();
@@ -51,33 +47,33 @@ public class Thief implements Callable <List> {
                     e.printStackTrace();
                 }
             }
-                /*
-                    only one thief can enter to home
-                 */
-            semTh.acquire(1);
-                /*
-                we get expensive things while there is a place in the backpack and they are at home
-                 */
-            Collections.sort(sharedHouse.getList(), Thing.COST_DESC);
             /*
-            if the next expensive thing does not fit, then we leave
+            only one thief can enter to home
              */
-            while (sharedHouse.size() != 0 && (backpack.getCurrentSize() - sharedHouse.getList().get(0).getWeight()) >= 0) {
-                    /*
-                    add to backpack the thing with max cost
-                     */
-                backpack.setThing(sharedHouse.getList().remove(0));
-                }
+            synchronized (sharedHouse) {
+                semaphoreForThieves.acquire();
+            }
+            /*
+            we get expensive things while there is a place in the backpack and they are at home
+             */
+            System.out.println("Thief after sync " + Thread.currentThread().getName() + " Permits owner" + semaphoreForOwners.availablePermits() + " Permits thief " + semaphoreForThieves.availablePermits());
+            List<Thing> copyOfListThings = new ArrayList<>(sharedHouse.getList());
+            Collections.sort(copyOfListThings, Thing.COST_DESC);
+            List<Thing> listToDelete = new ArrayList<>();
+
+            while (!copyOfListThings.isEmpty() && backpack.setThing(copyOfListThings.get(0))){
+                listToDelete.add(copyOfListThings.get(0));
+                copyOfListThings.remove(0);
+            }
+            sharedHouse.removeListOfThings(listToDelete);
+
         } catch (InterruptedException e) {
             e.printStackTrace();
-            sharedHouse.notifyAll();
-        }
-        /*
-        Pick up all things
-         */
-        semTh.release(1);
-        synchronized (sharedHouse){
-            sharedHouse.notifyAll();
+        }finally {
+            semaphoreForThieves.release();
+            synchronized (sharedHouse){
+                sharedHouse.notifyAll();
+            }
         }
     }
 }

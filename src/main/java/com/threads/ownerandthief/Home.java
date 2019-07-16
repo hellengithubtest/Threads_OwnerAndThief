@@ -3,7 +3,6 @@ package com.threads.ownerandthief;
 import java.util.*;
 
 public class Home {
-    private List<Thing> stolenThings = new ArrayList<Thing>();
     private List<Thing> thingsList = Collections.synchronizedList(new ArrayList<Thing>());
 
     public int size() {
@@ -14,10 +13,6 @@ public class Home {
         return this.thingsList;
     }
 
-    public void setList(List<Thing> list) {
-        this.thingsList = list;
-    }
-
     public String printList() {
         String out = "";
         for (int i = 0; i < this.thingsList.size(); i++)
@@ -25,17 +20,15 @@ public class Home {
         return out;
     }
 
-    public void joinLists(List<Thing> a) {
-        if ((this.thingsList == null) || this.thingsList.isEmpty()) {
-            this.thingsList = a;
-        } else {
-            int thisSize = thingsList.size();
-            int aSize = a.size();
-            List<Thing> res = new ArrayList<Thing>(aSize + thisSize);
-            res.addAll(a);
-            res.addAll(this.thingsList);
-            this.thingsList = res;
+    public void addThings(List<Thing> a) {
+            for (Thing thing : a){
+                thingsList.add(thing);
         }
+    }
 
+    public void removeListOfThings(List<Thing> a) {
+        for (Thing thing : a){
+            thingsList.remove(thing);
+        }
     }
 }
