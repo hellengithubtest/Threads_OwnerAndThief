@@ -13,30 +13,31 @@ public class Home {
 
     public String printList() {
         String out = "";
-        for (int i = 0; i < this.thingsList.size(); i++)
+        for (int i = 0; i < this.thingsList.size(); i++) {
             out = out + this.thingsList.get(i).toString();
+        }
         return out;
     }
 
     public void addThings(List<Thing> a) {
-        for (Thing thing : a){
+        for (Thing thing : a) {
             thingsList.add(thing);
         }
     }
 
     public void removeListOfStolenThings(List<Thing> a) {
-        for (Thing thing : a){
+        for (Thing thing : a) {
             thingsList.remove(thing);
         }
     }
-    public boolean getThiefInHome(){
+    public boolean getThiefInHome() {
         return this.isThiefInHome;
     }
 
-    public void setThiefInHome(boolean status){
+    public void setThiefInHome(boolean status) {
         this.isThiefInHome = status;
     }
-    public int getCountOfOwnersInHome(){
+    public int getCountOfOwnersInHome() {
         return this.countOfOwnersInHome;
     }
 

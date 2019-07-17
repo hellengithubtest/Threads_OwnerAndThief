@@ -1,6 +1,7 @@
 package com.threads.ownerandthief;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 
 public class Owner implements Callable {
     private final Home sharedHouse;
@@ -8,6 +9,7 @@ public class Owner implements Callable {
     private CountDownLatch latch = null;
 
     public Owner(Home sharedHouse, CountDownLatch latch) {
+
         this.sharedHouse = sharedHouse;
         this.ownerBackpack = new Backpack();
         this.latch = latch;
@@ -17,7 +19,7 @@ public class Owner implements Callable {
     public List<Thing> call() {
         try {
             latch.await();
-        }catch (InterruptedException e){
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -29,8 +31,8 @@ public class Owner implements Callable {
 
     public void addThings() {
         try {
-            synchronized (sharedHouse){
-                while (sharedHouse.getThiefInHome()){
+            synchronized (sharedHouse) {
+                while (sharedHouse.getThiefInHome()) {
                     sharedHouse.wait();
                 }
                 sharedHouse.setCountOfOwnersInHome(sharedHouse.getCountOfOwnersInHome() + 1);
@@ -42,7 +44,7 @@ public class Owner implements Callable {
             }*/
 
             sharedHouse.addThings(this.ownerBackpack.getList());
-            ownerBackpack.getList().clear();
+            ownerBackpack.getList().clear(); //TODO one by one
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -53,11 +55,11 @@ public class Owner implements Callable {
             }
         }
     }
-    public List<Thing> getBackpackList(){
+    public List<Thing> getBackpackList() {
         return ownerBackpack.getList();
     }
 
-    public void pullBackpackList(int size){
+    public void pullBackpackList(int size) {
         this.ownerBackpack.pullBackpack(size);
     }
 }

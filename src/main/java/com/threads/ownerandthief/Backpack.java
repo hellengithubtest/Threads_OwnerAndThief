@@ -12,24 +12,24 @@ public class Backpack {
         this.remainingWeight = totalWeight;
     }
 
-    public boolean setThing(Thing thing) {
-        if(remainingWeight >= thing.getWeight()) {
+    public boolean tryToAddThing(Thing thing) {
+        if (remainingWeight >= thing.getWeight()) {
             this.backpackList.add(thing);
             int size = this.remainingWeight;
             this.remainingWeight = size - thing.getWeight();
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public void pullBackpack(int size){
-        for(int i = 0; i < size; i++){
+    public void pullBackpack(int size) {
+        for (int i = 0; i < size; i++) {
             this.backpackList.add(new Thing());
         }
     }
 
-    public List<Thing> getList(){
+    public List<Thing> getList() {
         return this.backpackList;
     }
 }

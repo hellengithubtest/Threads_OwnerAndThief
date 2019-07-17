@@ -9,24 +9,27 @@ public class Thing {
 
     public Thing() {
         Random random = new Random();
-        this.cost = random.nextInt(maxCost ) + 1;
-        this.weight = random.nextInt(maxWeight) + 1;
+        this.cost = random.nextInt( maxCost ) + 1;    //TODO add init thing
+        this.weight = random.nextInt( maxWeight ) + 1;
     }
 
     public int getCost(){
         return this.cost;
     }
-    public int getWeight(){
+    public int getWeight() {
         return this.weight;
     }
 
-    public String toString(){
-        return " Thing: cost-" + cost + " weight-" + weight;
-    }
     public static Comparator<Thing> COST_DESC = new Comparator<Thing>() {
         @Override
         public int compare(Thing thing, Thing t1) {
             return Integer.compare(t1.cost, thing.cost);
         }
     };
+
+    @Override
+    public String toString() {
+        return " Thing: cost-" + cost + " weight-" + weight;
+    }
+
 }

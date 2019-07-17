@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.*;
 
 public class Thief implements Callable <List> {
+
     private final Home sharedHouse;
     private final Backpack backpack;
     private CountDownLatch latch = null;
@@ -19,7 +20,7 @@ public class Thief implements Callable <List> {
     public List<Thing> call() {
         try {
             latch.await();
-        }catch (InterruptedException e){
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -31,12 +32,13 @@ public class Thief implements Callable <List> {
 
     private void stole() {
         try {
-            synchronized (sharedHouse){
-                while(sharedHouse.getCountOfOwnersInHome() > 0 || sharedHouse.getThiefInHome()){
+            synchronized (sharedHouse) {
+                while(sharedHouse.getCountOfOwnersInHome() > 0 || sharedHouse.getThiefInHome()) {
                     sharedHouse.wait();
                 }
                 sharedHouse.setThiefInHome(true);
-                System.out.println("Check count of owners " + sharedHouse.getCountOfOwnersInHome());
+                System.out.println("Check count of owners "
+                        + sharedHouse.getCountOfOwnersInHome());
             }
             /*
             we get expensive things while there is a place in the backpack and they are at home
@@ -52,7 +54,7 @@ public class Thief implements Callable <List> {
                 List<Thing> copyOfListThings = new ArrayList<>(sharedHouse.getList());
                 Collections.sort(copyOfListThings, Thing.COST_DESC);
                 List<Thing> listToDelete = new ArrayList<>();
-                while (!copyOfListThings.isEmpty() && backpack.setThing(copyOfListThings.get(0))){
+                while (!copyOfListThings.isEmpty() && backpack.tryToAddThing(copyOfListThings.get(0))) {
                     listToDelete.add(copyOfListThings.get(0));
                     copyOfListThings.remove(0);
                 }
@@ -62,8 +64,8 @@ public class Thief implements Callable <List> {
 
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }finally {
-            synchronized (sharedHouse){
+        } finally {
+            synchronized (sharedHouse) {
                 sharedHouse.notifyAll();
             }
         }
