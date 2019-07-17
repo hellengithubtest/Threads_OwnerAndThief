@@ -11,8 +11,8 @@ public class Thing {
         Random random = new Random();
         this.cost = random.nextInt(maxCost ) + 1;
         this.weight = random.nextInt(maxWeight) + 1;
-
     }
+
     public int getCost(){
         return this.cost;
     }

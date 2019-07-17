@@ -1,16 +1,11 @@
 package com.threads.ownerandthief;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Home {
     private List<Thing> thingsList = Collections.synchronizedList(new ArrayList<Thing>());
     private  boolean isThiefInHome = false;
     private int countOfOwnersInHome = 0;
-
-    public int size() {
-        return this.thingsList.size();
-    }
 
     public List<Thing> getList() {
         return this.thingsList;
@@ -24,12 +19,12 @@ public class Home {
     }
 
     public void addThings(List<Thing> a) {
-            for (Thing thing : a){
-                thingsList.add(thing);
+        for (Thing thing : a){
+            thingsList.add(thing);
         }
     }
 
-    public void removeListOfThings(List<Thing> a) {
+    public void removeListOfStolenThings(List<Thing> a) {
         for (Thing thing : a){
             thingsList.remove(thing);
         }

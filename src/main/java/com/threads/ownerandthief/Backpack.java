@@ -5,12 +5,10 @@ import java.util.List;
 public class Backpack {
 
     private List<Thing> backpackList = new ArrayList<Thing>();
-    private int totalWeight;
-    private int remainingWeight = 0;
+    private int totalWeight = 15;
+    private int remainingWeight;
 
-    public Backpack(int totalWeight) {
-
-        this.totalWeight = totalWeight;
+    public Backpack() {
         this.remainingWeight = totalWeight;
     }
 
@@ -32,7 +30,6 @@ public class Backpack {
     }
 
     public List<Thing> getList(){
-
         return this.backpackList;
     }
 }

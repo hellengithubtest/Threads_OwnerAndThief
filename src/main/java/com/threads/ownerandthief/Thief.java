@@ -10,9 +10,8 @@ public class Thief implements Callable <List> {
     private CountDownLatch latch = null;
 
     public Thief(Home sharedHouse, CountDownLatch latch) {
-        int totalWeight = 15;
         this.sharedHouse = sharedHouse;
-        this.backpack = new Backpack(totalWeight);
+        this.backpack = new Backpack();
         this.latch = latch;
     }
 
@@ -43,23 +42,21 @@ public class Thief implements Callable <List> {
             we get expensive things while there is a place in the backpack and they are at home
              */
             synchronized (sharedHouse) {
-
-/*                System.out.println("Get number of owners" + sharedHouse.getCountOfOwnersInHome() + sharedHouse.getThiefInHome());
+/*
+                System.out.println("Get number of owners" + sharedHouse.getCountOfOwnersInHome() + sharedHouse.getThiefInHome());
 
                 if(sharedHouse.getThiefInHome() && sharedHouse.getCountOfOwnersInHome() > 0 ){
                     System.out.println("ERROR: thread Thief" + sharedHouse.getThiefInHome() + Thread.currentThread().getName());
-                }*/
-
+                }
+*/
                 List<Thing> copyOfListThings = new ArrayList<>(sharedHouse.getList());
                 Collections.sort(copyOfListThings, Thing.COST_DESC);
                 List<Thing> listToDelete = new ArrayList<>();
-
                 while (!copyOfListThings.isEmpty() && backpack.setThing(copyOfListThings.get(0))){
                     listToDelete.add(copyOfListThings.get(0));
                     copyOfListThings.remove(0);
                 }
-
-                sharedHouse.removeListOfThings(listToDelete);
+                sharedHouse.removeListOfStolenThings(listToDelete);
                 sharedHouse.setThiefInHome(false);
             }
 

@@ -7,11 +7,10 @@ public class Owner implements Callable {
     private Backpack ownerBackpack;
     private CountDownLatch latch = null;
 
-    public Owner(Home sharedHouse, CountDownLatch barrier) {
-        int totalWeight = 10;
+    public Owner(Home sharedHouse, CountDownLatch latch) {
         this.sharedHouse = sharedHouse;
-        this.ownerBackpack = new Backpack(totalWeight);
-        this.latch = barrier;
+        this.ownerBackpack = new Backpack();
+        this.latch = latch;
     }
 
     @Override
@@ -23,12 +22,12 @@ public class Owner implements Callable {
         }
 
         System.out.println("Owner try to add thing " + Thread.currentThread().getName());
-        addThing();
+        addThings();
         System.out.println("Owner have added the thing" + Thread.currentThread().getName());
         return ownerBackpack.getList();
     }
 
-    public void addThing() {
+    public void addThings() {
         try {
             synchronized (sharedHouse){
                 while (sharedHouse.getThiefInHome()){

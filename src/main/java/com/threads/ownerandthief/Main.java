@@ -11,14 +11,14 @@ public class Main {
 
     public static void main(String[] args) {
 
-        List<Future<List>> list = new ArrayList<Future<List>>();
+        List<Future<List>> listOfThreads = new ArrayList<Future<List>>();
         List<Thing> originListOfThings = new ArrayList<>();
         List<Thing> returnedListOfThings = new ArrayList<>();
         Home home = new Home();
 
-        initializeOwnersAndThieves(home, originListOfThings,list, latch);
+        initializeOwnersAndThieves(home, originListOfThings,listOfThreads, latch);
 
-        for (Future<List> fut : list) {
+        for (Future<List> fut : listOfThreads) {
             try {
                 returnedListOfThings.addAll(fut.get());
             } catch (InterruptedException | ExecutionException e) {
@@ -32,7 +32,7 @@ public class Main {
         returnedListOfThings.addAll(home.getList());
         printOutput(originListOfThings, returnedListOfThings);
     }
-    public static void initializeOwnersAndThieves(Home home, List<Thing> originListOfThings, List <Future<List>> list, CountDownLatch latch){
+    public static void initializeOwnersAndThieves(Home home, List<Thing> originListOfThings, List <Future<List>> listOfThreads, CountDownLatch latch){
         ExecutorService executor = Executors.newFixedThreadPool(numberOfOwners + numberOfThieves);
         Random random = new Random();
 
@@ -42,13 +42,13 @@ public class Main {
             originListOfThings.addAll(owner.getBackpackList());
             Callable<List> callableOwners = owner;
             Future<List> future = executor.submit(callableOwners);
-            list.add(future);
+            listOfThreads.add(future);
             latch.countDown();
         }
         for (int i = 0; i < numberOfThieves; i++){
             Callable<List> callableThieves = new Thief(home, latch);
             Future<List> future = executor.submit(callableThieves);
-            list.add(future);
+            listOfThreads.add(future);
             latch.countDown();
         }
 
