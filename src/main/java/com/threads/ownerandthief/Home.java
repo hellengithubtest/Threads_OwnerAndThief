@@ -5,8 +5,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Home {
     private List<Thing> thingsList = Collections.synchronizedList(new ArrayList<Thing>());
-    private volatile boolean isThiefInHome = false;
-    private AtomicInteger countOfOwnersInHome = new AtomicInteger(0);
+    private  boolean isThiefInHome = false;
+    private int countOfOwnersInHome = 0;
 
     public int size() {
         return this.thingsList.size();
@@ -41,7 +41,11 @@ public class Home {
     public void setThiefInHome(boolean status){
         this.isThiefInHome = status;
     }
-    public AtomicInteger getCountOfOwnersInHome(){
+    public int getCountOfOwnersInHome(){
         return this.countOfOwnersInHome;
+    }
+
+    public void setCountOfOwnersInHome(int countOfOwnersInHome) {
+        this.countOfOwnersInHome = countOfOwnersInHome;
     }
 }

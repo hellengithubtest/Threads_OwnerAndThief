@@ -5,20 +5,20 @@ import java.util.concurrent.*;
 public class Owner implements Callable {
     private final Home sharedHouse;
     private Backpack ownerBackpack;
-    private CyclicBarrier barrier = null;
+    private CountDownLatch latch = null;
 
-    public Owner(Home sharedHouse, CyclicBarrier barrier) {
+    public Owner(Home sharedHouse, CountDownLatch barrier) {
         int totalWeight = 10;
         this.sharedHouse = sharedHouse;
         this.ownerBackpack = new Backpack(totalWeight);
-        this.barrier = barrier;
+        this.latch = barrier;
     }
 
     @Override
     public List<Thing> call() {
         try {
-            barrier.await();
-        } catch (InterruptedException | BrokenBarrierException e) {
+            latch.await();
+        }catch (InterruptedException e){
             e.printStackTrace();
         }
 
@@ -34,13 +34,14 @@ public class Owner implements Callable {
                 while (sharedHouse.getThiefInHome()){
                     sharedHouse.wait();
                 }
-                sharedHouse.getCountOfOwnersInHome().incrementAndGet();
+                sharedHouse.setCountOfOwnersInHome(sharedHouse.getCountOfOwnersInHome() + 1);
+                System.out.println("Owner current count " + sharedHouse.getCountOfOwnersInHome());
             }
-/*
-            if(sharedHouse.getThiefInHome() && sharedHouse.getCountOfOwnersInHome().get() > 0){
+
+/*            if(sharedHouse.getThiefInHome() && sharedHouse.getCountOfOwnersInHome() > 0){
                 System.out.println("ERROR: thread Owner " + sharedHouse.getThiefInHome() + Thread.currentThread().getName());
-            }
-*/
+            }*/
+
             sharedHouse.addThings(this.ownerBackpack.getList());
             ownerBackpack.getList().clear();
 
@@ -48,7 +49,7 @@ public class Owner implements Callable {
             e.printStackTrace();
         } finally {
             synchronized (sharedHouse) {
-                sharedHouse.getCountOfOwnersInHome().decrementAndGet();
+                sharedHouse.setCountOfOwnersInHome(sharedHouse.getCountOfOwnersInHome() - 1);
                 sharedHouse.notifyAll();
             }
         }
