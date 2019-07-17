@@ -8,10 +8,6 @@ public class Backpack {
     private int totalWeight;
     private int remainingWeight = 0;
 
-    /*
-    Constructor for Thief
-     */
-
     public Backpack(int totalWeight) {
 
         this.totalWeight = totalWeight;
