@@ -1,16 +1,34 @@
 package com.threads.ownerandthief;
+
 import java.util.*;
 
 public class Thing {
-    private int maxCost = 10;
-    private int maxWeight = 15;
+
     private int cost;
     private int weight;
 
-    public Thing() {
-        Random random = new Random();
-        this.cost = random.nextInt( maxCost ) + 1;    //TODO add init thing
-        this.weight = random.nextInt( maxWeight ) + 1;
+    public static class Builder {
+        private Thing newThing;
+
+        public Builder() {
+            newThing = new Thing();
+        }
+
+        public Builder withRandomCost( int maxCost) {
+            Random random = new Random();
+            newThing.cost = random.nextInt(maxCost) + 1;
+            return this;
+        }
+
+        public Builder withRandomWeight( int maxWeight) {
+            Random random = new Random();
+            newThing.weight = random.nextInt(maxWeight) + 1;
+            return this;
+        }
+
+        public Thing build() {
+            return newThing;
+        }
     }
 
     public int getCost(){

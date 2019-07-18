@@ -13,8 +13,8 @@ public class Home {
 
     public String printList() {
         String out = "";
-        for (int i = 0; i < this.thingsList.size(); i++) {
-            out = out + this.thingsList.get(i).toString();
+        for (int i = 0; i < thingsList.size(); i++) {
+            out = out + thingsList.get(i).toString();
         }
         return out;
     }

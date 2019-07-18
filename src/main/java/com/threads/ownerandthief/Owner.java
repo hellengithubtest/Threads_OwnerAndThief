@@ -1,18 +1,38 @@
 package com.threads.ownerandthief;
+
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 
 public class Owner implements Callable {
-    private final Home sharedHouse;
+    private Home sharedHouse;
     private Backpack ownerBackpack;
-    private CountDownLatch latch = null;
+    private CountDownLatch latch;
 
-    public Owner(Home sharedHouse, CountDownLatch latch) {
 
-        this.sharedHouse = sharedHouse;
-        this.ownerBackpack = new Backpack();
-        this.latch = latch;
+    public static class Builder {
+        private Owner newOwner;
+        public Builder() {
+            newOwner = new Owner();
+        }
+
+        public Builder withHome(Home sharedHouse) {
+            newOwner.sharedHouse = sharedHouse;
+            return this;
+        }
+
+        public Builder withBackpack(Backpack newBackpack) {
+            newOwner.ownerBackpack = newBackpack;
+            return this;
+        }
+
+        public Builder withLatch(CountDownLatch newlatch) {
+            newOwner.latch = newlatch;
+            return this;
+        }
+        public Owner build() {
+            return newOwner;
+        }
     }
 
     @Override
@@ -43,7 +63,7 @@ public class Owner implements Callable {
                 System.out.println("ERROR: thread Owner " + sharedHouse.getThiefInHome() + Thread.currentThread().getName());
             }*/
 
-            sharedHouse.addThings(this.ownerBackpack.getList());
+            sharedHouse.addThings(ownerBackpack.getList());
             ownerBackpack.getList().clear(); //TODO one by one
 
         } catch (InterruptedException e) {
@@ -54,12 +74,5 @@ public class Owner implements Callable {
                 sharedHouse.notifyAll();
             }
         }
-    }
-    public List<Thing> getBackpackList() {
-        return ownerBackpack.getList();
-    }
-
-    public void pullBackpackList(int size) {
-        this.ownerBackpack.pullBackpack(size);
     }
 }

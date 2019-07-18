@@ -1,4 +1,5 @@
 package com.threads.ownerandthief;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -6,14 +7,33 @@ import java.util.concurrent.*;
 
 public class Thief implements Callable <List> {
 
-    private final Home sharedHouse;
-    private final Backpack backpack;
-    private CountDownLatch latch = null;
+    private Home sharedHouse;
+    private Backpack backpack;
+    private CountDownLatch latch;
 
-    public Thief(Home sharedHouse, CountDownLatch latch) {
-        this.sharedHouse = sharedHouse;
-        this.backpack = new Backpack();
-        this.latch = latch;
+    public static class Builder {
+        private Thief newThief;
+        public Builder() {
+            newThief = new Thief();
+        }
+
+        public Thief.Builder withHome(Home sharedHouse) {
+            newThief.sharedHouse = sharedHouse;
+            return this;
+        }
+
+        public Thief.Builder withBackpack(Backpack newBackpack) {
+            newThief.backpack = newBackpack;
+            return this;
+        }
+
+        public Thief.Builder withLatch(CountDownLatch latch) {
+            newThief.latch = latch;
+            return this;
+        }
+        public Thief build() {
+            return newThief;
+        }
     }
 
     @Override
