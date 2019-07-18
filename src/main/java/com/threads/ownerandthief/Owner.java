@@ -14,7 +14,7 @@ public class Owner implements Callable {
     public static class Builder {
 
         private Owner newOwner;
-        
+
         public Builder() {
             newOwner = new Owner();
         }
@@ -74,7 +74,7 @@ public class Owner implements Callable {
         } finally {
             synchronized (sharedHouse) {
                 sharedHouse.setCountOfOwnersInHome(sharedHouse.getCountOfOwnersInHome() - 1);
-                sharedHouse.notifyAll();
+                sharedHouse.notify();
             }
         }
     }

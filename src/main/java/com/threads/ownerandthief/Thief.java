@@ -65,7 +65,6 @@ public class Thief implements Callable <List> {
             /*
             we get expensive things while there is a place in the backpack and they are at home
              */
-            synchronized (sharedHouse) {
 /*
                 System.out.println("Get number of owners" + sharedHouse.getCountOfOwnersInHome() + sharedHouse.getThiefInHome());
 
@@ -82,13 +81,12 @@ public class Thief implements Callable <List> {
                 }
                 sharedHouse.removeListOfStolenThings(listToDelete);
                 sharedHouse.setThiefInHome(false);
-            }
 
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             synchronized (sharedHouse) {
-                sharedHouse.notifyAll();
+                sharedHouse.notify();
             }
         }
     }

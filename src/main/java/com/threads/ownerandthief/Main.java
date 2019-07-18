@@ -11,8 +11,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Callable;
 
 public class Main {
-    static final int NUMBER_OF_OWNERS = 10;
-    static final int NUMBER_OF_THIEVES = 10;
+    static final int NUMBER_OF_OWNERS = 20;
+    static final int NUMBER_OF_THIEVES = 20;
 
     static final int TOTAL_NUMBER_OF_THINGS_FOR_EACH_OWNER = 5;
     private static final CountDownLatch latch =
