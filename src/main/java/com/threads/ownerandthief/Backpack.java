@@ -17,7 +17,9 @@ public class Backpack {
     private int remainingWeight;
 
     public static class Builder {
+
         private Backpack newBackpack;
+
         public Builder() {
             newBackpack = new Backpack();
         }

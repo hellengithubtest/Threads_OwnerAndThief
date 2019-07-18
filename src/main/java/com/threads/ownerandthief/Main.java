@@ -58,33 +58,24 @@ public class Main {
         Random random = new Random();
         List<Callable> callableListOfObjects = new ArrayList<>();
         for (int i = 0; i < NUMBER_OF_OWNERS; i++) {
-            Backpack backpack = new Backpack.Builder()
-                    .withListOfThings(random.nextInt(TOTAL_NUMBER_OF_THINGS_FOR_EACH_OWNER) + 1)
-                    .build();
+            Backpack backpack = new Backpack.Builder().withListOfThings(random.nextInt(TOTAL_NUMBER_OF_THINGS_FOR_EACH_OWNER) + 1).build();
             originListOfThings.addAll(backpack.getList());
-            Callable<List> owner = new Owner.Builder()
-                    .withHome(home)
-                    .withBackpack(backpack)
-                    .withLatch(latch)
-                    .build();
+            Callable<List> owner = new Owner.Builder().withHome(home).withBackpack(backpack).withLatch(latch).build();
             callableListOfObjects.add(owner);
         }
 
         for (int i = 0; i < NUMBER_OF_THIEVES; i++) {
             Backpack backpack = new Backpack.Builder().withRandomWeight().build();
-            Callable<List> thief = new Thief.Builder()
-                    .withHome(home)
-                    .withBackpack(backpack)
-                    .withLatch(latch)
-                    .build();
+            Callable<List> thief = new Thief.Builder().withHome(home).withBackpack(backpack).withLatch(latch).build();
             callableListOfObjects.add(thief);
         }
         return callableListOfObjects;
     }
 
     public static void printOutput(List<Thing> originListOfThings, List<Thing> returnedListOfThings){
+        boolean compareLists = originListOfThings.containsAll(returnedListOfThings) && returnedListOfThings.containsAll(originListOfThings);
         System.out.println("ORIGIN " + "Size: " + originListOfThings.size() + " " + originListOfThings);
         System.out.println("OUT    " + "Size: " + returnedListOfThings.size() + " " + returnedListOfThings);
-        System.out.println("Lists are compare? " + (originListOfThings.containsAll(returnedListOfThings) && returnedListOfThings.containsAll(originListOfThings)));
+        System.out.println("Lists are compare? " + compareLists);
     }
 }

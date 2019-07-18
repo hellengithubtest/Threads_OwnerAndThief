@@ -8,6 +8,7 @@ public class Thing {
     private int weight;
 
     public static class Builder {
+
         private Thing newThing;
 
         public Builder() {

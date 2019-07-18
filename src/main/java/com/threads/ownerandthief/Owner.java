@@ -5,13 +5,16 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 
 public class Owner implements Callable {
+
     private Home sharedHouse;
     private Backpack ownerBackpack;
     private CountDownLatch latch;
 
 
     public static class Builder {
+
         private Owner newOwner;
+        
         public Builder() {
             newOwner = new Owner();
         }
@@ -26,8 +29,8 @@ public class Owner implements Callable {
             return this;
         }
 
-        public Builder withLatch(CountDownLatch newlatch) {
-            newOwner.latch = newlatch;
+        public Builder withLatch(CountDownLatch latch) {
+            newOwner.latch = latch;
             return this;
         }
         public Owner build() {

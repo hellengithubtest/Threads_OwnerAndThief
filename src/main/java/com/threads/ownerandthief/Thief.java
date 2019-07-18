@@ -12,22 +12,24 @@ public class Thief implements Callable <List> {
     private CountDownLatch latch;
 
     public static class Builder {
+
         private Thief newThief;
+
         public Builder() {
             newThief = new Thief();
         }
 
-        public Thief.Builder withHome(Home sharedHouse) {
+        public Builder withHome(Home sharedHouse) {
             newThief.sharedHouse = sharedHouse;
             return this;
         }
 
-        public Thief.Builder withBackpack(Backpack newBackpack) {
+        public Builder withBackpack(Backpack newBackpack) {
             newThief.backpack = newBackpack;
             return this;
         }
 
-        public Thief.Builder withLatch(CountDownLatch latch) {
+        public Builder withLatch(CountDownLatch latch) {
             newThief.latch = latch;
             return this;
         }
